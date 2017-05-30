@@ -35,8 +35,11 @@ jdyrlandweaver
 ====================*/
 void plot( screen s, zbuffer zb, color c, int x, int y, double z) {
   int newy = YRES - 1 - y;
-  if ( x >= 0 && x < XRES && newy >=0 && newy < YRES )
-    s[x][newy] = c;
+  if(z >= zb[x][y]){
+    if ( x >= 0 && x < XRES && newy >=0 && newy < YRES )
+      s[x][newy] = c;
+    zb[x][y] = z;
+  }
 }
 
 /*======== void clear_screen() ==========
