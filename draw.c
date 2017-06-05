@@ -11,6 +11,8 @@
 void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
   color c;
 
+  /* printf("SCANNING\n"); */
+  
   int indtop, indmid, indbot;
   indtop = find_top(points, i); indmid = find_mid(points, i); indbot = find_bot(points, i); 
 
@@ -20,12 +22,16 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
   int yt, ym, yb;
   yt = points->m[1][indtop]; ym = points->m[1][indmid]; yb = points->m[1][indbot];
 
+  int zt, zm, zbot;
+  zt = points->m[2][indtop]; zm = points->m[2][indmid]; zbot = points->m[2][indbot];
+
 
   int dy;
   dy = ym - yb;
   int j;
 
   double dxmb, dxtb, dxtm;
+  double dzmb, dztb, dztm;
 
   c.red = ((xt * yt) + 128) % 256 ;
   c.green = ((xm * ym) + 128) % 256;
@@ -35,12 +41,16 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
     if(dy != 0){
       dxmb = ((double)(xm-xb))/((double)(ym-yb));
       dxtb = ((double)(xt-xb))/((double)(yt-yb));
+      dzmb = ((double)(zm-zbot))/((double)(ym-yb));
+      dztb = ((double)(zt-zbot))/((double)(yt-yb));
       for(j=0;j<dy;j++){
 	draw_line(xb + j * dxmb,
 		  yb+j,
+		  zbot + j * dzmb,
 		  xb + j * dxtb,
 		  yb+j,
-		  s, c);
+		  zbot + j * dztb,
+		  s, zb, c);
       }
     }
     dy = yt - ym;
@@ -48,12 +58,16 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
     if(dy != 0){
       dxtb = ((double)(xt-xb))/((double)(yt-yb));
       dxtm = ((double)(xt-xm))/((double)(yt-ym));
+      dxtb = ((double)(zt-zbot))/((double)(yt-yb));
+      dxtm = ((double)(zt-zm))/((double)(yt-ym));
       for(j=0;j<dy;j++){
 	draw_line(xm + j * dxtm,
 		  ym+j,
+		  zm + j * dztm,
 		  xb + (ym-yb)*(((double)(xt-xb))/((double)(yt-yb))) + j*dxtb,
 		  ym+j,
-		  s, c);
+		  zbot + (ym-yb)*(((double)(zt-zbot))/((double)(yt-yb))) + j*dztb,
+		  s, zb, c);
       }
     }
   }
@@ -153,31 +167,31 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
     if ( normal[2] > 0 ) {
       
       //printf("polygon %d\n", point);
-      /* scanline_convert( polygons, point, s, zb ); */
+      scanline_convert( polygons, point, s, zb );
       /* c.red = 0; */
       /* c.green = 255; */
       /* c.blue = 0; */
-      draw_line( polygons->m[0][point],
-      		 polygons->m[1][point],
-      		 polygons->m[2][point],
-      		 polygons->m[0][point+1],
-      		 polygons->m[1][point+1],
-      		 polygons->m[2][point+1],
-      		 s, zb, c);
-      draw_line( polygons->m[0][point+2],
-      		 polygons->m[1][point+2],
-      		 polygons->m[2][point+2],
-      		 polygons->m[0][point+1],
-      		 polygons->m[1][point+1],
-      		 polygons->m[2][point+1],
-      		 s, zb, c);
-      draw_line( polygons->m[0][point],
-      		 polygons->m[1][point],
-      		 polygons->m[2][point],
-      		 polygons->m[0][point+2],
-      		 polygons->m[1][point+2],
-      		 polygons->m[2][point+2],
-      		 s, zb, c);
+      /* draw_line( polygons->m[0][point], */
+      /* 		 polygons->m[1][point], */
+      /* 		 polygons->m[2][point], */
+      /* 		 polygons->m[0][point+1], */
+      /* 		 polygons->m[1][point+1], */
+      /* 		 polygons->m[2][point+1], */
+      /* 		 s, zb, c); */
+      /* draw_line( polygons->m[0][point+2], */
+      /* 		 polygons->m[1][point+2], */
+      /* 		 polygons->m[2][point+2], */
+      /* 		 polygons->m[0][point+1], */
+      /* 		 polygons->m[1][point+1], */
+      /* 		 polygons->m[2][point+1], */
+      /* 		 s, zb, c); */
+      /* draw_line( polygons->m[0][point], */
+      /* 		 polygons->m[1][point], */
+      /* 		 polygons->m[2][point], */
+      /* 		 polygons->m[0][point+2], */
+      /* 		 polygons->m[1][point+2], */
+      /* 		 polygons->m[2][point+2], */
+      /* 		 s, zb, c); */
        }
   }
 }
@@ -622,6 +636,7 @@ void draw_line(int x0, int y0, double z0,
   x = x0;
   y = y0;
   z = z0;
+  dz = z1-z0;
   A = 2 * (y1 - y0);
   B = -2 * (x1 - x0);
   int wide = 0;
@@ -688,6 +703,7 @@ void draw_line(int x0, int y0, double z0,
       d+= d_east;
     }
     loop_start++;
+    z += dz;
   } //end drawing loop
   plot( s, zb, c, x1, y1, z );
 } //end draw_line
