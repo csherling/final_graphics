@@ -11,7 +11,8 @@
 void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
   color c;
 
-  /* printf("SCANNING\n"); */
+  printf("SCANNING\n");
+  fflush(stdout);
   
   int indtop, indmid, indbot;
   indtop = find_top(points, i); indmid = find_mid(points, i); indbot = find_bot(points, i); 
@@ -37,13 +38,24 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
   c.green = ((xm * ym) + 128) % 256;
   c.blue = ((xb * yb) + 128) % 256;
 
+  printf("SCANNING1\n");
+  fflush(stdout);
+
+  
   if(yt-yb != 0){
     if(dy != 0){
+        printf("SCANNING1.1\n");
+	fflush(stdout);
+  
       dxmb = ((double)(xm-xb))/((double)(ym-yb));
       dxtb = ((double)(xt-xb))/((double)(yt-yb));
       dzmb = ((double)(zm-zbot))/((double)(ym-yb));
       dztb = ((double)(zt-zbot))/((double)(yt-yb));
+        printf("SCANNING1.1.1\n");
+	fflush(stdout);
       for(j=0;j<dy;j++){
+	printf("SCANNING1.1.2\n");
+	fflush(stdout);
 	draw_line(xb + j * dxmb,
 		  yb+j,
 		  zbot + j * dzmb,
@@ -56,10 +68,13 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
     dy = yt - ym;
     
     if(dy != 0){
+      printf("SCANNING1.2\n");
+      fflush(stdout);
+
       dxtb = ((double)(xt-xb))/((double)(yt-yb));
       dxtm = ((double)(xt-xm))/((double)(yt-ym));
-      dxtb = ((double)(zt-zbot))/((double)(yt-yb));
-      dxtm = ((double)(zt-zm))/((double)(yt-ym));
+      dztb = ((double)(zt-zbot))/((double)(yt-yb));
+      dztm = ((double)(zt-zm))/((double)(yt-ym));
       for(j=0;j<dy;j++){
 	draw_line(xm + j * dxtm,
 		  ym+j,
@@ -71,6 +86,9 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
       }
     }
   }
+    printf("SCANNING2\n");
+  fflush(stdout);
+
 }
 
 int find_top(struct matrix * polygons, int index){
@@ -597,7 +615,7 @@ void draw_lines( struct matrix * points, screen s, zbuffer zb, color c) {
    printf("Need at least 2 points to draw a line!\n");
    return;
  }
- 
+
  int point;
  for (point=0; point < points->lastcol-1; point+=2)
    draw_line( points->m[0][point],
@@ -613,6 +631,8 @@ void draw_line(int x0, int y0, double z0,
 	       int x1, int y1, double z1,
 	       screen s, zbuffer zb, color c) {
   
+
+ 
   int x, y, d, A, B;
   int dy_east, dy_northeast, dx_east, dx_northeast, d_east, d_northeast;
   int loop_start, loop_end;
@@ -633,6 +653,7 @@ void draw_line(int x0, int y0, double z0,
     z1 = z;
   }
 
+  
   x = x0;
   y = y0;
   z = z0;
@@ -684,10 +705,19 @@ void draw_line(int x0, int y0, double z0,
     }
   }
 
+  printf("DRAWING1\n");
+  fflush(stdout);
 
   while ( loop_start < loop_end ) {
+
+    printf("Z: %lf\n", z);
+    fflush(stdout);
     
     plot( s, zb, c, x, y, z );
+
+    printf("DRAWING1.1\n");
+    fflush(stdout);  
+
     if ( (wide && ((A > 0 && d > 0) ||
 		   (A < 0 && d < 0)))
 	 ||
