@@ -11,8 +11,8 @@
 void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
   color c;
 
-  printf("SCANNING\n");
-  fflush(stdout);
+  /* printf("SCANNING\n"); */
+  /* fflush(stdout); */
   
   int indtop, indmid, indbot;
   indtop = find_top(points, i); indmid = find_mid(points, i); indbot = find_bot(points, i); 
@@ -31,6 +31,8 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
   dy = ym - yb;
   int j;
 
+  int ycor;
+
   double dxmb, dxtb, dxtm;
   double dzmb, dztb, dztm;
 
@@ -38,24 +40,26 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
   c.green = ((xm * ym) + 128) % 256;
   c.blue = ((xb * yb) + 128) % 256;
 
-  printf("SCANNING1\n");
-  fflush(stdout);
+  /* printf("SCANNING1\n"); */
+  /* fflush(stdout); */
 
   
   if(yt-yb != 0){
     if(dy != 0){
-        printf("SCANNING1.1\n");
-	fflush(stdout);
+        /* printf("SCANNING1.1\n"); */
+	/* fflush(stdout); */
   
       dxmb = ((double)(xm-xb))/((double)(ym-yb));
       dxtb = ((double)(xt-xb))/((double)(yt-yb));
       dzmb = ((double)(zm-zbot))/((double)(ym-yb));
       dztb = ((double)(zt-zbot))/((double)(yt-yb));
-        printf("SCANNING1.1.1\n");
-	fflush(stdout);
+      printf("dzmb: %lf\n", dzmb);
+      printf("dztb: %lf\n", dztb);
+      /* printf("SCANNING1.1.1\n"); */
+	/* fflush(stdout); */
       for(j=0;j<dy;j++){
-	printf("SCANNING1.1.2\n");
-	fflush(stdout);
+	/* printf("SCANNING1.1.2\n"); */
+	/* fflush(stdout); */
 	draw_line(xb + j * dxmb,
 		  yb+j,
 		  zbot + j * dzmb,
@@ -68,27 +72,32 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
     dy = yt - ym;
     
     if(dy != 0){
-      printf("SCANNING1.2\n");
-      fflush(stdout);
+      /* printf("SCANNING1.2\n"); */
+      /* fflush(stdout); */
 
       dxtb = ((double)(xt-xb))/((double)(yt-yb));
-      dxtm = ((double)(xt-xm))/((double)(yt-ym));
+      dxtm = ((double)(xt-xm))/((double)(yt-ym)); 
       dztb = ((double)(zt-zbot))/((double)(yt-yb));
       dztm = ((double)(zt-zm))/((double)(yt-ym));
+      printf("dztb: %lf\n", dztb);
+      printf("dztm: %lf\n", dztm);
       for(j=0;j<dy;j++){
+	ycor = 0;
+	ycor = ym+j;
+		printf("x0: %d, x1: %d, y0: %d, y1: %d, z0: %lf, z1: %lf\n", xm+j*dxtm, xb + (ym-yb)*(((double)(xt-xb))/((double)(yt-yb))) + j*dxtb, ycor, ycor, zm+j*dztm, zbot +(ym-yb+j)*dztb);
 	draw_line(xm + j * dxtm,
-		  ym+j,
+		  ycor,
 		  zm + j * dztm,
 		  xb + (ym-yb)*(((double)(xt-xb))/((double)(yt-yb))) + j*dxtb,
-		  ym+j,
-		  zbot + (ym-yb)*(((double)(zt-zbot))/((double)(yt-yb))) + j*dztb,
+		  ycor,
+		  zbot + (ym - yb + j)*dztb,
 		  s, zb, c);
+	printf("x0: %d, x1: %d, y0: %d, y1: %d, z0: %lf, z1: %lf\n", xm+j*dxtm, xb + (ym-yb)*(((double)(xt-xb))/((double)(yt-yb))) + j*dxtb, ycor, ycor, zm+j*dztm, zbot +(ym-yb+j)*dztb);
       }
     }
   }
-    printf("SCANNING2\n");
-  fflush(stdout);
-
+  /* printf("SCANNING2\n"); */
+  /* fflush(stdout); */
 }
 
 int find_top(struct matrix * polygons, int index){
@@ -174,7 +183,11 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
     printf("Need at least 3 points to draw a polygon!\n");
     return;
   }
- 
+
+  /* printf("Got to draw pol\n"); */
+  /* fflush(stdout); */
+
+  
   int point;
   double *normal;
   
@@ -395,8 +408,10 @@ void add_torus( struct matrix * edges,
   int p0, p1, p2, p3, lat, longt;
   int latStop, longStop, latStart, longStart;
   latStart = 0;
+  /* latStop = 2; */
   latStop = num_steps;
   longStart = 0;
+  /* longStop = 5; */
   longStop = num_steps;
   
   for ( lat = latStart; lat < latStop; lat++ ) {
@@ -631,7 +646,20 @@ void draw_line(int x0, int y0, double z0,
 	       int x1, int y1, double z1,
 	       screen s, zbuffer zb, color c) {
   
+    /* printf("X0: %d, Y0: %d, \n", x0, y0); */
+    /* printf("X1: %d, Y1: %d, \n", x1, y1); */
+    /* printf("Z0: , %lfZ1: %lf\n", z0, z1);; */
+    /* fflush(stdout); */
+      
 
+  /* printf("drawing0.1\n"); */
+  /* fflush(stdout); */
+  
+  /* zbuffer tmpzb; */
+  /* tmpzb = *zb; */
+  
+  /* printf("drawing0.2\n"); */
+  /* fflush(stdout); */
  
   int x, y, d, A, B;
   int dy_east, dy_northeast, dx_east, dx_northeast, d_east, d_northeast;
@@ -657,7 +685,7 @@ void draw_line(int x0, int y0, double z0,
   x = x0;
   y = y0;
   z = z0;
-  dz = z1-z0;
+  /* dz = (z1-z0)/(x1-x0); */
   A = 2 * (y1 - y0);
   B = -2 * (x1 - x0);
   int wide = 0;
@@ -705,18 +733,25 @@ void draw_line(int x0, int y0, double z0,
     }
   }
 
-  printf("DRAWING1\n");
-  fflush(stdout);
+  /* printf("DRAWING1\n"); */
+  /* fflush(stdout); */
 
   while ( loop_start < loop_end ) {
 
-    printf("Z: %lf\n", z);
-    fflush(stdout);
+    /* printf("X: %d, Y: %d, \n", x, y); */
+    /* printf("Z: %lf\n", z); */
+    /* fflush(stdout); */
     
-    plot( s, zb, c, x, y, z );
 
-    printf("DRAWING1.1\n");
-    fflush(stdout);  
+    if(x >= 0 && y >= 0 && x < 500 && y < 500){ 
+      /* if(z > zb[x][y]){ */
+      /* 	zb[x][y] = z; */
+	plot( s, zb, c, x, y, z );
+	/* printf("new zb[x][y]: %lf\n", zb[x][y]); */
+      /* } */
+    }
+    /* printf("DRAWING1.1\n"); */
+    /* fflush(stdout);   */
 
     if ( (wide && ((A > 0 && d > 0) ||
 		   (A < 0 && d < 0)))
@@ -733,7 +768,16 @@ void draw_line(int x0, int y0, double z0,
       d+= d_east;
     }
     loop_start++;
-    z += dz;
+    z += (z1-z0)/(abs(x1-x0));
+    /* printf("z: %lf\n", z); */
   } //end drawing loop
-  plot( s, zb, c, x1, y1, z );
+  /* printf("DRAWING2\n"); */
+  /* fflush(stdout); */
+  if(x >= 0 && y >= 0 && x < 500 && y < 500){
+    /* if(z > zb[x][y]){ */
+      zb[x][y] = z;
+      plot( s, zb, c, x1, y1, z );
+      /* printf("new zb[x][y]: %lf\n", zb[x][y]); */
+    /* } */
+  }
 } //end draw_line

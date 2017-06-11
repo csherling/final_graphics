@@ -35,10 +35,17 @@ jdyrlandweaver
 ====================*/
 void plot( screen s, zbuffer zb, color c, int x, int y, double z) {
   int newy = YRES - 1 - y;
+  /* printf("Got to plot\n"); */
+  /* fflush(stdout); */
   if(z >= zb[x][y]){
-    if ( x >= 0 && x < XRES && newy >=0 && newy < YRES )
+    if(zb[x][newy] != LONG_MIN){
+      /* printf("x: %d, y: %d, z: %lf, zb[x][y]: %lf\n", x, y, z, zb[x][y]); */
+    }
+    if ( x >= 0 && x < XRES && newy >=0 && newy < YRES ){
       s[x][newy] = c;
-    zb[x][y] = z;
+      zb[x][y] = z;
+      /* printf("plot new zb[x][y]: %lf\n", zb[x][y]); */
+    }
   }
 }
 
@@ -78,9 +85,13 @@ void clear_zbuffer( zbuffer zb ) {
 
   int x, y;
 
-  for ( y=0; y < YRES; y++ )
-    for ( x=0; x < XRES; x++)      
+  for ( y=0; y < YRES; y++ ){
+    for ( x=0; x < XRES; x++) {     
+      /* printf("x: %d, y: %d\n", x, y); */
+      /* fflush(stdout); */
       zb[x][y] = LONG_MIN;
+    }
+  }
 }
 
 /*======== void save_ppm() ==========

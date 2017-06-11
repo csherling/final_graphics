@@ -254,10 +254,23 @@ void my_main() {
   struct stack *systems;
   screen t;
   zbuffer zb;
+
+  /* zb = (zbuffer *)malloc(sizeof(double) * 500 * 500); */
+  
+  /* printf("Got to main1\n"); */
+  /* fflush(stdout); */
+
+  /* zb = (double **)calloc(500, sizeof(double) * 500); */
+  /* int zbi; */
+  /* for(zbi=0;zbi<500;zbi++){ */
+  /*   zb[i] = (double *)calloc(500, sizeof(double)); */
+  /* } */
   color g;
   double step = 0.1;
   double theta;
   double knob_value, xval, yval, zval;
+  /* printf("Got to main2\n"); */
+  /* fflush(stdout); */
   
   g.red = 0;
   g.green = 0;
@@ -269,10 +282,17 @@ void my_main() {
     systems = new_stack();
     tmp = new_matrix(4, 1000);
     clear_screen( t );
-    clear_zbuffer(zb);
+
+  /* printf("Got to main3\n"); */
+  /* fflush(stdout); */
+
+
+  /* printf("Got to main4\n"); */
+  /* fflush(stdout); */
     
     //if there are multiple frames, set the knobs
     if ( num_frames > 1 ) {      
+    clear_zbuffer(zb);
       vn = knobs[f];
       
       while ( vn ) {	
@@ -479,4 +499,5 @@ void my_main() {
   //generate animated gif
   if (num_frames > 1)
     make_animation( name );
+  /* free(zb); */
 }
