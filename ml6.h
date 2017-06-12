@@ -27,12 +27,12 @@ struct point_t {
 } point_t;
 
 struct light_source {
-  int x;
-  int y;
-  int z;
-  int r;
-  int g;
-  int b;
+  double x;
+  double y;
+  double z;
+  double r;
+  double g;
+  double b;
 } light_source;
 
 struct light_constants {

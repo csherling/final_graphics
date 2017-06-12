@@ -186,6 +186,37 @@ struct vary_node ** second_pass() {
   return knobs;
 }
 
+
+light ** light_pass() {
+  int i, k, numlights;
+  numlights = 0;
+  light ** lits;
+  light * onelit;
+  for (i=0; i<lastop; i++) {
+    if (op[i].opcode == LIGHT){
+      numlights++;
+    }
+  }
+  int lightnum;  lightnum = 0;
+  
+  lits = (light **)calloc(numlights, sizeof(light));
+  
+  for (i=0; i<lastop; i++) {
+    if (op[i].opcode == LIGHT){
+      onelit = (light *)calloc(1, sizeof(light));
+      onelit->x = op[i].op.light.p->s.l->l[0];
+      onelit->y = op[i].op.light.p->s.l->l[1];
+      onelit->z = op[i].op.light.p->s.l->l[2];
+      onelit->r = op[i].op.light.p->s.l->l[3];
+      onelit->g = op[i].op.light.p->s.l->l[4];
+      onelit->b = op[i].op.light.p->s.l->l[5];
+      lits[lightnum]=onelit;
+      lightnum++;
+    }
+  }
+
+}
+
 /*======== void print_knobs() ==========
 Inputs:   
 Returns: 
@@ -248,6 +279,9 @@ void my_main() {
   knobs = second_pass();
   char frame_name[128];
   int f;
+
+  light ** lights;
+  lights = light_pass();
   
   int i, j;
   struct matrix *tmp;
@@ -331,26 +365,26 @@ void my_main() {
 	  clear_screen( t, amb);
 	  break;
 
-	case LIGHT:
-	  li.x = l->l[0];
-	  li.y = l->l[1];
-	  li.z = l->l[2];
-	  li.r = l->c[0];
-	  li.g = l->c[1];
-	  li.b = l->c[2];
-	  break;
+	/* case LIGHT: */
+	/*   li.x = l->l[0]; */
+	/*   li.y = l->l[1]; */
+	/*   li.z = l->l[2]; */
+	/*   li.r = l->c[0]; */
+	/*   li.g = l->c[1]; */
+	/*   li.b = l->c[2]; */
+	/*   break; */
 
-	case CONSTANTS:
-	  ref.ar=c->r[0];
-	  ref.dr=c->r[1];
-	  ref.sr=c->r[2];
-	  ref.ar=c->g[0];
-	  ref.dr=c->g[1];
-	  ref.sr=c->g[2];
-	  ref.ar=c->b[0];
-	  ref.dr=c->b[1];
-	  ref.sr=c->b[2];
-	  break;
+	/* case CONSTANTS: */
+	/*   ref.ar=c->r[0]; */
+	/*   ref.dr=c->r[1]; */
+	/*   ref.sr=c->r[2]; */
+	/*   ref.ar=c->g[0]; */
+	/*   ref.dr=c->g[1]; */
+	/*   ref.sr=c->g[2]; */
+	/*   ref.ar=c->b[0]; */
+	/*   ref.dr=c->b[1]; */
+	/*   ref.sr=c->b[2]; */
+	/*   break; */
 	  
 	case SPHERE:
 	  /* printf("Sphere: %6.2f %6.2f %6.2f r=%6.2f", */
