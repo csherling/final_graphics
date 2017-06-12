@@ -26,6 +26,30 @@ struct point_t {
   int blue;
 } point_t;
 
+struct light_source {
+  int x;
+  int y;
+  int z;
+  int r;
+  int g;
+  int b;
+} light_source;
+
+struct light_constants {
+  double ar;
+  double dr;
+  double sr;
+  double ag;
+  double dg;
+  double sg;
+  double ab;
+  double db;
+  double sb;
+} light_constants;
+
+typedef struct light_source light;
+typedef struct light_constants reflection;
+
 /*
   We can now use color as a data type representing a point.
   eg:

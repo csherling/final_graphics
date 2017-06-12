@@ -266,6 +266,8 @@ void my_main() {
   /*   zb[i] = (double *)calloc(500, sizeof(double)); */
   /* } */
   color g, amb;
+  light li;
+  reflection ref;
   double step = 0.1;
   double theta;
   double knob_value, xval, yval, zval;
@@ -327,6 +329,27 @@ void my_main() {
 	  amb.green = op[i].op.ambient.c[1];
 	  amb.blue = op[i].op.ambient.c[2];
 	  clear_screen( t, amb);
+	  break;
+
+	case LIGHT:
+	  li.x = l->l[0];
+	  li.y = l->l[1];
+	  li.z = l->l[2];
+	  li.r = l->c[0];
+	  li.g = l->c[1];
+	  li.b = l->c[2];
+	  break;
+
+	case CONSTANTS:
+	  ref.ar=c->r[0];
+	  ref.dr=c->r[1];
+	  ref.sr=c->r[2];
+	  ref.ar=c->g[0];
+	  ref.dr=c->g[1];
+	  ref.sr=c->g[2];
+	  ref.ar=c->b[0];
+	  ref.dr=c->b[1];
+	  ref.sr=c->b[2];
 	  break;
 	  
 	case SPHERE:
