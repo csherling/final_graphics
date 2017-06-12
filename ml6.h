@@ -33,6 +33,7 @@ struct light_source {
   double r;
   double g;
   double b;
+  char name[128];
 } light_source;
 
 struct light_constants {
@@ -45,6 +46,7 @@ struct light_constants {
   double ab;
   double db;
   double sb;
+  char name[128];
 } light_constants;
 
 typedef struct light_source light;

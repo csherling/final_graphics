@@ -210,11 +210,44 @@ light ** light_pass() {
       onelit->r = op[i].op.light.p->s.l->l[3];
       onelit->g = op[i].op.light.p->s.l->l[4];
       onelit->b = op[i].op.light.p->s.l->l[5];
+      strcpy(onelit->name, op[i].op.light.p->name);
       lits[lightnum]=onelit;
       lightnum++;
     }
   }
+}
 
+reflection ** constants_pass() {
+  int i, k, numrefs;
+  numrefs = 0;
+  reflection ** refs;
+  reflection * oneref;
+  for (i=0; i<lastop; i++) {
+    if (op[i].opcode == CONSTANTS){
+      numrefs++;
+    }
+  }
+  int refnum;  refnum = 0;
+  
+  refs = (reflection **)calloc(numrefs, sizeof(reflection));
+  
+  for (i=0; i<lastop; i++) {
+    if (op[i].opcode == CONSTANTS){
+      oneref = (reflection *)calloc(1, sizeof(reflection));
+      oneref->ar = op[i].op.constants.p->s.c->r[0];
+      oneref->dr = op[i].op.constants.p->s.c->r[1];
+      oneref->sr = op[i].op.constants.p->s.c->r[2];
+      oneref->ag = op[i].op.constants.p->s.c->g[0];
+      oneref->dg = op[i].op.constants.p->s.c->g[1];
+      oneref->sg = op[i].op.constants.p->s.c->g[2];
+      oneref->ab = op[i].op.constants.p->s.c->b[0];
+      oneref->db = op[i].op.constants.p->s.c->b[1];
+      oneref->sb = op[i].op.constants.p->s.c->b[2];
+      strcpy(oneref->name, op[i].op.constants.p->name);
+      refs[refnum]=oneref;
+      refnum++;
+    }
+  }
 }
 
 /*======== void print_knobs() ==========
@@ -280,9 +313,25 @@ void my_main() {
   char frame_name[128];
   int f;
 
+  //
   light ** lights;
   lights = light_pass();
+  //
+  //
+  reflection ** refs;
+  refs = constants_pass();
+  reflection generic;
+  generic.ar=1;
+  generic.dr=1;
+  generic.sr=1;
+  generic.ag=1;
+  generic.dg=1;
+  generic.sg=1;
+  generic.ab=1;
+  generic.db=1;
+  generic.sb=1;
   
+  //
   int i, j;
   struct matrix *tmp;
   struct stack *systems;
@@ -300,8 +349,8 @@ void my_main() {
   /*   zb[i] = (double *)calloc(500, sizeof(double)); */
   /* } */
   color g, amb;
-  light li;
-  reflection ref;
+  light tmpl;
+  reflection tmpr;
   double step = 0.1;
   double theta;
   double knob_value, xval, yval, zval;
@@ -404,7 +453,7 @@ void my_main() {
 		     op[i].op.sphere.d[2],
 		     op[i].op.sphere.r, step);
 	  matrix_mult( peek(systems), tmp );
-	  draw_polygons(tmp, t, zb, g);
+	  draw_polygons(tmp, t, zb, g, lights, amb, generic);
 	  tmp->lastcol = 0;
 	  break;
 	case TORUS:
@@ -426,7 +475,7 @@ void my_main() {
 		    op[i].op.torus.d[2],
 		    op[i].op.torus.r0,op[i].op.torus.r1, step);
 	  matrix_mult( peek(systems), tmp );
-	  draw_polygons(tmp, t, zb, g);
+	  draw_polygons(tmp, t, zb, g, lights, amb, generic);
 	  tmp->lastcol = 0;	  
 	  break;
 	case BOX:
@@ -449,7 +498,7 @@ void my_main() {
 		  op[i].op.box.d1[0],op[i].op.box.d1[1],
 		  op[i].op.box.d1[2]);
 	  matrix_mult( peek(systems), tmp );
-	  draw_polygons(tmp, t, zb, g);
+	  draw_polygons(tmp, t, zb, g, lights, amb, generic);
 	  tmp->lastcol = 0;
 	  break;
 	case LINE:

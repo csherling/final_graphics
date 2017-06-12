@@ -223,7 +223,7 @@ Goes through polygons 3 points at a time, drawing
 lines connecting each points to create bounding
 triangles
 ====================*/
-void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
+void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, light ** l, color a, reflection r ) {
   if ( polygons->lastcol < 3 ) {
     printf("Need at least 3 points to draw a polygon!\n");
     return;
@@ -235,10 +235,29 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c ) {
   
   int point;
   double *normal;
+
+  int iall, iamb, idif, ispe;
   
   for (point=0; point < polygons->lastcol-2; point+=3) {
 
     normal = calculate_normal(polygons, point);
+
+    //AMBIENT
+    
+
+
+
+    //DIFFUSE
+
+
+
+
+    //SPECULAR
+
+
+
+
+
     
     if ( normal[2] > 0 ) {
       
