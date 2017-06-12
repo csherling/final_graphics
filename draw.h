@@ -13,6 +13,8 @@ void add_polygon( struct matrix * points,
 		   double x2, double y2, double z2);
 void draw_polygons( struct matrix * points, screen s, zbuffer zb, color c);
 
+void myline(int x0, int y0, double z0, int x1, int y1, double z1, screen s, zbuffer zb, color c);
+
 int find_top(struct matrix * polygons, int index);
 int find_mid(struct matrix * polygons, int index);
 int find_bot(struct matrix * polygons, int index);

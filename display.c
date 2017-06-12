@@ -37,13 +37,13 @@ void plot( screen s, zbuffer zb, color c, int x, int y, double z) {
   int newy = YRES - 1 - y;
   /* printf("Got to plot\n"); */
   /* fflush(stdout); */
-  if(z >= zb[x][y]){
-    if(zb[x][newy] != LONG_MIN){
-      printf("x: %d, y: %d, z: %lf, zb[x][y]: %lf\n", x, y, z, zb[x][y]);
-    }
-    if ( x >= 0 && x < XRES && newy >=0 && newy < YRES ){
+  if ( x >= 0 && x < XRES && newy >=0 && newy < YRES ){
+      if(z >= zb[x][newy]){
+      /* if(zb[x][newy] != LONG_MIN){ */
+      /* 	printf("x: %d, y: %d, z: %lf, zb[x][y]: %lf\n", x, y, z, zb[x][newy]); */
+      /* } */      
       s[x][newy] = c;
-      zb[x][y] = z;
+      zb[x][newy] = z;
       /* printf("plot new zb[x][y]: %lf\n", zb[x][y]); */
     }
   }

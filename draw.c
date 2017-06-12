@@ -53,14 +53,15 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
       dxtb = ((double)(xt-xb))/((double)(yt-yb));
       dzmb = ((double)(zm-zbot))/((double)(ym-yb));
       dztb = ((double)(zt-zbot))/((double)(yt-yb));
-      printf("dzmb: %lf\n", dzmb);
-      printf("dztb: %lf\n", dztb);
+      /* printf("dzmb: %lf\n", dzmb); */
+      /* printf("dztb: %lf\n", dztb); */
       /* printf("SCANNING1.1.1\n"); */
 	/* fflush(stdout); */
       for(j=0;j<dy;j++){
 	/* printf("SCANNING1.1.2\n"); */
 	/* fflush(stdout); */
-	draw_line(xb + j * dxmb,
+	
+	myline(xb + j * dxmb,
 		  yb+j,
 		  zbot + j * dzmb,
 		  xb + j * dxtb,
@@ -79,8 +80,8 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
       dxtm = ((double)(xt-xm))/((double)(yt-ym)); 
       dztb = ((double)(zt-zbot))/((double)(yt-yb));
       dztm = ((double)(zt-zm))/((double)(yt-ym));
-      printf("dztb: %lf\n", dztb);
-      printf("dztm: %lf\n", dztm);
+      /* printf("dztb: %lf\n", dztb); */
+      /* printf("dztm: %lf\n", dztm); */
       for(j=0;j<dy;j++){
 	ycor = 0;
 	/* printf("ym: %d, j: %d, ycor: %d, ym+j: %d, ym+j: %d\n", ym, j, ycor, ym+j, ym+j); */
@@ -93,7 +94,7 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
 	/*        ycor, */
 	/*        zm+j*dztm, */
 	/*        zbot +(ym-yb+j)*dztb); */
-	draw_line(xm + j * dxtm,
+	myline(xm + j * dxtm,
 		  ycor,
 		  zm + j * dztm,
 		  xb + (ym-yb)*(((double)(xt-xb))/((double)(yt-yb))) + j*dxtb,
@@ -112,6 +113,36 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
   }
   /* printf("SCANNING2\n"); */
   /* fflush(stdout); */
+}
+
+void myline(int x0, int y0, double z0, int x1, int y1, double z1, screen s, zbuffer zb, color c){
+
+  int i;
+  int xt, zt;
+  if(x0 > x1){
+    xt = x0;
+    x0 = x1;
+    x1 = xt;
+    zt = z0;
+    z0 = z1;
+    z1 = zt;
+  }
+
+  int dz = (z1-z0)/(x1-x0);
+
+  for(i=0;i<x1-x0;i++){
+  /* printf("x0: %d, y0: %d, z0: %lf\n", */
+  /* 	 x0 + i, */
+  /* 	 y0, */
+  /* 	 z0 + i*dz); */
+  /* printf("r: %d, g: %d, b: %d\n", c.red, c.green, c.blue); */
+  
+    plot(s, zb, c,
+	 x0 + i,
+	 y0,
+	 z0 + i*dz);
+  }
+  
 }
 
 int find_top(struct matrix * polygons, int index){

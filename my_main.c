@@ -282,7 +282,7 @@ void my_main() {
     systems = new_stack();
     tmp = new_matrix(4, 1000);
     clear_screen( t );
-
+    clear_zbuffer(zb);
   /* printf("Got to main3\n"); */
   /* fflush(stdout); */
 
@@ -292,7 +292,7 @@ void my_main() {
     
     //if there are multiple frames, set the knobs
     if ( num_frames > 1 ) {      
-    clear_zbuffer(zb);
+
       vn = knobs[f];
       
       while ( vn ) {	
