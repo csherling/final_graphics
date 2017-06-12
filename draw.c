@@ -83,8 +83,16 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
       printf("dztm: %lf\n", dztm);
       for(j=0;j<dy;j++){
 	ycor = 0;
+	/* printf("ym: %d, j: %d, ycor: %d, ym+j: %d, ym+j: %d\n", ym, j, ycor, ym+j, ym+j); */
 	ycor = ym+j;
-		printf("x0: %d, x1: %d, y0: %d, y1: %d, z0: %lf, z1: %lf\n", xm+j*dxtm, xb + (ym-yb)*(((double)(xt-xb))/((double)(yt-yb))) + j*dxtb, ycor, ycor, zm+j*dztm, zbot +(ym-yb+j)*dztb);
+		/* printf("ym: %d, j: %d, ycor: %d, ym+j: %d, ym+j: %d\n", ym, j, ycor, ym+j, ym+j); */
+	/* printf("x0: %d, x1: %d, y0: %d, y1: %d, z0: %lf, z1: %lf\n", */
+	/*        xm+j*dxtm, */
+	/*        xb + (ym-yb)*(((double)(xt-xb))/((double)(yt-yb))) + j*dxtb, */
+	/*        ycor, */
+	/*        ycor, */
+	/*        zm+j*dztm, */
+	/*        zbot +(ym-yb+j)*dztb); */
 	draw_line(xm + j * dxtm,
 		  ycor,
 		  zm + j * dztm,
@@ -92,7 +100,13 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
 		  ycor,
 		  zbot + (ym - yb + j)*dztb,
 		  s, zb, c);
-	printf("x0: %d, x1: %d, y0: %d, y1: %d, z0: %lf, z1: %lf\n", xm+j*dxtm, xb + (ym-yb)*(((double)(xt-xb))/((double)(yt-yb))) + j*dxtb, ycor, ycor, zm+j*dztm, zbot +(ym-yb+j)*dztb);
+	/* printf("x0: %d, x1: %d, y0: %d, y1: %d, z0: %lf, z1: %lf\n", */
+	/*        xm+j*dxtm, */
+	/*        xb + (ym-yb)*(((double)(xt-xb))/((double)(yt-yb))) + j*dxtb, */
+	/*        ycor, */
+	/*        ycor, */
+	/*        zm+j*dztm, */
+	/*        zbot +(ym-yb+j)*dztb); */
       }
     }
   }
@@ -646,9 +660,9 @@ void draw_line(int x0, int y0, double z0,
 	       int x1, int y1, double z1,
 	       screen s, zbuffer zb, color c) {
   
-    /* printf("X0: %d, Y0: %d, \n", x0, y0); */
-    /* printf("X1: %d, Y1: %d, \n", x1, y1); */
-    /* printf("Z0: , %lfZ1: %lf\n", z0, z1);; */
+    printf("X0: %d, Y0: %d, \n", x0, y0);
+    printf("X1: %d, Y1: %d, \n", x1, y1);
+    printf("Z0: %lf, Z1: %lf\n", z0, z1);;
     /* fflush(stdout); */
       
 
@@ -768,8 +782,8 @@ void draw_line(int x0, int y0, double z0,
       d+= d_east;
     }
     loop_start++;
-    z += (z1-z0)/(abs(x1-x0));
-    /* printf("z: %lf\n", z); */
+    z += (z1-z0)*((double)loop_end/(double)loop_start);
+    printf("z: %lf\n", z);
   } //end drawing loop
   /* printf("DRAWING2\n"); */
   /* fflush(stdout); */
