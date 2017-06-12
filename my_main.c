@@ -265,7 +265,7 @@ void my_main() {
   /* for(zbi=0;zbi<500;zbi++){ */
   /*   zb[i] = (double *)calloc(500, sizeof(double)); */
   /* } */
-  color g;
+  color g, amb;
   double step = 0.1;
   double theta;
   double knob_value, xval, yval, zval;
@@ -276,12 +276,15 @@ void my_main() {
   g.green = 0;
   g.blue = 0;
 
+  amb.red = 0;
+  amb.green = 0;
+  amb.blue = 0;
 
   for (f=0; f < num_frames; f++) {
 
     systems = new_stack();
     tmp = new_matrix(4, 1000);
-    clear_screen( t );
+    clear_screen( t, amb );
     clear_zbuffer(zb);
   /* printf("Got to main3\n"); */
   /* fflush(stdout); */
@@ -317,6 +320,13 @@ void my_main() {
 	  for ( j=0; j < lastsym; j++ ) 
 	    if ( symtab[j].type == SYM_VALUE )
 	      symtab[j].s.value = op[i].op.setknobs.value;
+	  break;
+
+	case AMBIENT:
+	  amb.red = op[i].op.ambient.c[0];
+	  amb.green = op[i].op.ambient.c[1];
+	  amb.blue = op[i].op.ambient.c[2];
+	  clear_screen( t, amb);
 	  break;
 	  
 	case SPHERE:
