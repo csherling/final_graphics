@@ -730,7 +730,7 @@ void draw_line(int x0, int y0, double z0,
   x = x0;
   y = y0;
   z = z0;
-  /* dz = (z1-z0)/(x1-x0); */
+  dz = (z1-z0);
   A = 2 * (y1 - y0);
   B = -2 * (x1 - x0);
   int wide = 0;
@@ -813,8 +813,8 @@ void draw_line(int x0, int y0, double z0,
       d+= d_east;
     }
     loop_start++;
-    z += (z1-z0)*((double)loop_end/(double)loop_start);
-    printf("z: %lf\n", z);
+    z += dz;
+    /* printf("z: %lf\n", z); */
   } //end drawing loop
   /* printf("DRAWING2\n"); */
   /* fflush(stdout); */
