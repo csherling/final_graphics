@@ -11,7 +11,7 @@ void add_polygon( struct matrix * points,
 		   double x0, double y0, double z0, 
 		   double x1, double y1, double z1,
 		   double x2, double y2, double z2);
-void draw_polygons( struct matrix * points, screen s, zbuffer zb, color c, light * l, color a, reflection r);
+void draw_polygons( struct matrix * points, screen s, zbuffer zb, color c, light * l, color a, reflection r, int numl, int numr);
 
 void myline(int x0, int y0, double z0, int x1, int y1, double z1, screen s, zbuffer zb, color c);
 

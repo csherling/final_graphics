@@ -223,7 +223,7 @@ Goes through polygons 3 points at a time, drawing
 lines connecting each points to create bounding
 triangles
 ====================*/
-void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, light * l, color a, reflection r ) {
+void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, light * l, color a, reflection r , int numl, int numr) {
   if ( polygons->lastcol < 3 ) {
     printf("Need at least 3 points to draw a polygon!\n");
     return;
@@ -275,10 +275,12 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, ligh
 
     printf("Got to draw pol1.1\n");
     fflush(stdout);
-    
-    while(l[ctr].name != NULL){
 
+    for(ctr = 0; ctr<numl; ctr++){
       printf("Got to draw pol2\n");
+      fflush(stdout);
+
+      printf("Got to draw pol2.1\n");
       fflush(stdout);
       
       light[0] = l[ctr].x;
@@ -298,7 +300,6 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, ligh
       idr += l[ctr].r * r.dr * (un[0]*ul[0]+un[1]*ul[1]+un[2]*ul[2]);
       idg += l[ctr].g * r.dg * (un[0]*ul[0]+un[1]*ul[1]+un[2]*ul[2]);
       idb += l[ctr].b * r.db * (un[0]*ul[0]+un[1]*ul[1]+un[2]*ul[2]);
-      ctr++;
     }
     //SPECULAR
     isr = 0;
@@ -307,7 +308,7 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, ligh
     ctr = 0;
 
    
-    while(l[ctr].name != NULL){
+    for(ctr = 0; ctr<numl; ctr++){
       light[0] = l[ctr].x;
       light[1] = l[ctr].y;
       light[2] = l[ctr].z;

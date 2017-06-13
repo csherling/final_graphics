@@ -214,6 +214,7 @@ light * light_pass() {
       lightnum++;
     }
   }
+  return lits;
 }
 
 reflection * constants_pass() {
@@ -247,6 +248,7 @@ reflection * constants_pass() {
       refnum++;
     }
   }
+  return refs;
 }
 
 /*======== void print_knobs() ==========
@@ -305,6 +307,8 @@ void print_knobs() {
   ====================*/
 void my_main() {
 
+  int i, j;
+
   struct vary_node ** knobs;
   struct vary_node * vn;
   first_pass();
@@ -312,12 +316,28 @@ void my_main() {
   char frame_name[128];
   int f;
 
+  int numlights;
+  numlights = 0;
+  for (i=0; i<lastop; i++) {
+    if (op[i].opcode == LIGHT){
+      numlights++;
+    }
+  }
+
+  int numrefs;
+  numrefs = 0;
+  for (i=0; i<lastop; i++) {
+    if (op[i].opcode == CONSTANTS){
+      numrefs++;
+    }
+  }
+  
   //
-  light * lights;
+  light * lights = (light *)calloc(numlights, sizeof(light));
   lights = light_pass();
   //
   //
-  reflection * refs;
+  reflection * refs = (reflection *)calloc(numrefs, sizeof(reflection));
   refs = constants_pass();
   reflection generic;
   generic.ar=1;
@@ -330,7 +350,6 @@ void my_main() {
   generic.db=1;
   generic.sb=1;
   //
-  int i, j;
   struct matrix *tmp;
   struct stack *systems;
   screen t;
@@ -462,7 +481,7 @@ void my_main() {
 		     op[i].op.sphere.d[2],
 		     op[i].op.sphere.r, step);
 	  matrix_mult( peek(systems), tmp );
-	  draw_polygons(tmp, t, zb, g, lights, amb, tmpr);
+	  draw_polygons(tmp, t, zb, g, lights, amb, tmpr, numlights, numrefs);
 	  tmp->lastcol = 0;
 	  break;
 	case TORUS:
@@ -492,7 +511,7 @@ void my_main() {
 		    op[i].op.torus.d[2],
 		    op[i].op.torus.r0,op[i].op.torus.r1, step);
 	  matrix_mult( peek(systems), tmp );
-	  draw_polygons(tmp, t, zb, g, lights, amb, tmpr);
+	  draw_polygons(tmp, t, zb, g, lights, amb, tmpr, numlights, numrefs);
 	  tmp->lastcol = 0;	  
 	  break;
 	case BOX:
@@ -523,7 +542,7 @@ void my_main() {
 		  op[i].op.box.d1[0],op[i].op.box.d1[1],
 		  op[i].op.box.d1[2]);
 	  matrix_mult( peek(systems), tmp );
-	  draw_polygons(tmp, t, zb, g, lights, amb, tmpr);
+	  draw_polygons(tmp, t, zb, g, lights, amb, tmpr, numlights, numrefs);
 	  tmp->lastcol = 0;
 	  break;
 	case LINE:
