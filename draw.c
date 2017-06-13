@@ -11,8 +11,8 @@
 void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color c ) {
   /* color c; */
 
-  printf("SCANNING\n");
-  fflush(stdout);
+  /* printf("SCANNING\n"); */
+  /* fflush(stdout); */
   
   int indtop, indmid, indbot;
   indtop = find_top(points, i); indmid = find_mid(points, i); indbot = find_bot(points, i); 
@@ -229,8 +229,8 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, ligh
     return;
   }
 
-  printf("Got to draw pol\n");
-  fflush(stdout);
+  /* printf("Got to draw pol\n"); */
+  /* fflush(stdout); */
 
   
   int point;
@@ -243,8 +243,8 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, ligh
   double lxc, lyc, lzc;
   double maglight;
   
-  int iallr, iallg, iallb = 0;
-  int iar, iag, iab, idr, idg, idb, isr, isg, isb = 0;
+  double iallr, iallg, iallb = 0;
+  double iar, iag, iab, idr, idg, idb, isr, isg, isb = 0;
 
   int ctr;
   ctr = 0;
@@ -273,22 +273,22 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, ligh
     idb = 0;
     ctr = 0;
 
-    printf("Got to draw pol1.1\n");
-    fflush(stdout);
+    /* printf("Got to draw pol1.1\n"); */
+    /* fflush(stdout); */
 
     for(ctr = 0; ctr<numl; ctr++){
-      printf("Got to draw pol2\n");
-      fflush(stdout);
+      /* printf("Got to draw pol2\n"); */
+      /* fflush(stdout); */
 
-      printf("Got to draw pol2.1\n");
-      fflush(stdout);
+      /* printf("Got to draw pol2.1\n"); */
+      /* fflush(stdout); */
       
       light[0] = l[ctr].x;
       light[1] = l[ctr].y;
       light[2] = l[ctr].z;
       
-      printf("Got to draw pol3\n");
-      fflush(stdout);
+      /* printf("Got to draw pol3\n"); */
+      /* fflush(stdout); */
 
       ul = unitify(light);
       
@@ -316,18 +316,51 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, ligh
 
       tempdot = un[0]*ul[0]+un[1]*ul[1]+un[2]*ul[2];
       scaley = 2*un[2]*tempdot - ul[2];
+      scaley = pow(scaley, 4);
       isr += l[ctr].r * r.sr * scaley;
       isg += l[ctr].g * r.sg * scaley;
       isb += l[ctr].b * r.sb * scaley;
+    /* printf("l.g: %lf\n", l[ctr].g); */
     }
+
+
+    
+    /* printf("iar: %lf, idr: %lf, isr: %lf \n", iar, idr, isr); */
+    /* printf("iag: %lf, idg: %lf, isg: %lf \n", iag, idg, isg); */
+    /* printf("iab: %lf, idb: %lf, isb: %lf \n", iab, idb, isb); */
     
     iallr = iar + idr + isr;
     iallg = iag + idg + isg;
     iallb = iab + idb + isb;
 
-    c.red = iallr;
-    c.green = iallg;
-    c.blue = iallb;
+    /* printf("iallr: %lf, iallg: %lf, iallb: %lf\n", iallr, iallg, iallb); */
+    
+    if(iallr > 255){
+      iallr = 255;
+    }
+    if(iallg > 255){
+      iallg = 255;
+    }
+    if(iallb > 255){
+      iallb = 255;
+    }
+
+    if(iallr < 0){
+      iallr = 0;
+    }
+    if(iallg < 0){
+      iallg = 0;
+    }
+    if(iallb < 0){
+      iallb = 0;
+    }
+
+    
+    c.red = (int)iallr;
+    c.green = (int)iallg;
+    c.blue = (int)iallb;
+
+    /* printf("r: %d, g: %d, b: %d\n", c.red, c.green, c.blue); */
     
     if ( normal[2] > 0 ) {
       
@@ -357,8 +390,11 @@ void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, ligh
       /* 		 polygons->m[1][point+2], */
       /* 		 polygons->m[2][point+2], */
       /* 		 s, zb, c); */
-       }
+    }
+    free(un);
+    free(ul);
   }
+  free(light);
 }
 
 /*======== void add_box() ==========

@@ -1,0 +1,45 @@
+frames 500
+basename final
+ambient 10 10 10
+light sun 1 0.25 0.25 200 200 200
+constants planet 0.04 0.44 0.15 0.05 0.55 0.2 0.05 0.55 0.2
+constants moons 0.05 0.55 0.4 0.05 0.55 0.4 0.05 0.55 0.4
+constants rings 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05
+constants ship 0.05 0.25 0.7 0.005 0.025 0.07 0.05 0.25 0.7
+
+//planet
+push
+move 250 250 0
+rotate x 20
+rotate z -20
+rotate y 360 planetspin
+sphere planet 0 0 0 75
+pop
+//rings
+push
+move 250 250 0
+rotate x 20
+rotate y 360 ringspin
+rotate z -20
+scale 1 0.1 1
+torus rings 0 0 0 25 125
+pop
+//moon
+push
+move 250 250 0
+rotate y 360 moonspin
+sphere moons 200 0 0 25
+pop
+//dankship
+push
+move -200 210 -500
+rotate x 720 shipspin
+move 1000 0 0 shipmove
+box ship 0 -5 0 25 10 10
+pop
+
+vary planetspin 0 499 0 50
+vary ringspin 0 499 0 1
+vary moonspin 0 499 0 2
+vary shipspin 0 499 0 1
+vary shipmove 0 499 0 1

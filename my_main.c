@@ -206,9 +206,9 @@ light * light_pass() {
       lits[lightnum].x = op[i].op.light.p->s.l->l[0];
       lits[lightnum].y = op[i].op.light.p->s.l->l[1];
       lits[lightnum].z = op[i].op.light.p->s.l->l[2];
-      lits[lightnum].r = op[i].op.light.p->s.l->l[3];
-      lits[lightnum].g = op[i].op.light.p->s.l->l[4];
-      lits[lightnum].b = op[i].op.light.p->s.l->l[5];
+      lits[lightnum].r = op[i].op.light.c[0];
+      lits[lightnum].g = op[i].op.light.c[1];
+      lits[lightnum].b = op[i].op.light.c[2];
       /* strcpy(onelit->name, op[i].op.light.p->name); */
       /* lits[lightnum]=onelit; */
       lightnum++;
@@ -368,7 +368,7 @@ void my_main() {
   color g, amb;
   light tmpl;
   reflection tmpr;
-  double step = 0.1;
+  double step = 0.01;
   double theta;
   double knob_value, xval, yval, zval;
   /* printf("Got to main2\n"); */
@@ -389,7 +389,7 @@ void my_main() {
 
     systems = new_stack();
     tmp = new_matrix(4, 1000);
-    clear_screen( t, amb );
+    clear_screen( t );
     clear_zbuffer(zb);
   /* printf("Got to main3\n"); */
   /* fflush(stdout); */
@@ -431,7 +431,7 @@ void my_main() {
 	  amb.red = op[i].op.ambient.c[0];
 	  amb.green = op[i].op.ambient.c[1];
 	  amb.blue = op[i].op.ambient.c[2];
-	  clear_screen( t, amb);
+	  clear_screen( t );
 	  break;
 
 	/* case LIGHT: */

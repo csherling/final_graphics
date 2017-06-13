@@ -56,14 +56,14 @@ Sets every color in screen s to black
 
 jdyrlandweaver
 ====================*/
-void clear_screen( screen s, color c ) {
+void clear_screen( screen s ) {
 
   int x, y;
-  /* color c; */
+  color c;
 
-  /* c.red = 0; */
-  /* c.green = 0; */
-  /* c.blue = 0; */
+  c.red = 0;
+  c.green = 0;
+  c.blue = 0;
 
   /* c.red = 255; */
   /* c.green = 255; */
