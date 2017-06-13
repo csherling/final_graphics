@@ -25,3 +25,18 @@ double *calculate_normal(struct matrix *polygons, int i) {
     
   return N;
 }
+
+double *unitify(double *v){
+  double *u = (double *)malloc(3 * sizeof(double));
+  double a, b, c;
+  a = pow(v[0], 2);
+  b = pow(v[1], 2);
+  c = pow(v[2], 2);
+  double mag;
+  mag = pow(a + b + c, 0.5);
+  u[0] = v[0]/mag;
+  u[1] = v[1]/mag;
+  u[2] = v[2]/mag;
+  
+  return u;
+}

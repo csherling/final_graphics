@@ -8,11 +8,11 @@
 #include "math.h"
 #include "gmath.h"
 
-void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
-  color c;
+void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb, color c ) {
+  /* color c; */
 
-  /* printf("SCANNING\n"); */
-  /* fflush(stdout); */
+  printf("SCANNING\n");
+  fflush(stdout);
   
   int indtop, indmid, indbot;
   indtop = find_top(points, i); indmid = find_mid(points, i); indbot = find_bot(points, i); 
@@ -36,9 +36,9 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
   double dxmb, dxtb, dxtm;
   double dzmb, dztb, dztm;
 
-  c.red = ((xt * yt) + 128) % 256 ;
-  c.green = ((xm * ym) + 128) % 256;
-  c.blue = ((xb * yb) + 128) % 256;
+  /* c.red = ((xt * yt) + 128) % 256 ; */
+  /* c.green = ((xm * ym) + 128) % 256; */
+  /* c.blue = ((xb * yb) + 128) % 256; */
 
   /* printf("SCANNING1\n"); */
   /* fflush(stdout); */
@@ -223,46 +223,115 @@ Goes through polygons 3 points at a time, drawing
 lines connecting each points to create bounding
 triangles
 ====================*/
-void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, light ** l, color a, reflection r ) {
+void draw_polygons( struct matrix *polygons, screen s, zbuffer zb, color c, light * l, color a, reflection r ) {
   if ( polygons->lastcol < 3 ) {
     printf("Need at least 3 points to draw a polygon!\n");
     return;
   }
 
-  /* printf("Got to draw pol\n"); */
-  /* fflush(stdout); */
+  printf("Got to draw pol\n");
+  fflush(stdout);
 
   
   int point;
   double *normal;
+  double *light = (double *)malloc(3 * sizeof(double));
+  
+  double *un;
+  double *ul;
+  
+  double lxc, lyc, lzc;
+  double maglight;
+  
+  int iallr, iallg, iallb = 0;
+  int iar, iag, iab, idr, idg, idb, isr, isg, isb = 0;
 
-  int iall, iamb, idif, ispe;
+  int ctr;
+  ctr = 0;
+
+  double tempdot;
+  double scaley;
+  tempdot = 0;
+  scaley = 0;
+
+
+
   
   for (point=0; point < polygons->lastcol-2; point+=3) {
 
     normal = calculate_normal(polygons, point);
+    un = unitify(normal);
 
     //AMBIENT
-    
-
-
+    iar = r.ar * a.red;
+    iag = r.ag * a.green;
+    iab = r.ab * a.blue;
 
     //DIFFUSE
+    idr = 0;
+    idg = 0;
+    idb = 0;
+    ctr = 0;
 
+    printf("Got to draw pol1.1\n");
+    fflush(stdout);
+    
+    while(l[ctr].name != NULL){
 
+      printf("Got to draw pol2\n");
+      fflush(stdout);
+      
+      light[0] = l[ctr].x;
+      light[1] = l[ctr].y;
+      light[2] = l[ctr].z;
+      
+      printf("Got to draw pol3\n");
+      fflush(stdout);
 
-
+      ul = unitify(light);
+      
+      /* lxc = pow(ul[0], 2); */
+      /* lyc = pow(ul[1], 2); */
+      /* lzc = pow(ul[2], 2); */
+      /* maglight = pow(lxc + lyc + lzc, 0.5); */
+      
+      idr += l[ctr].r * r.dr * (un[0]*ul[0]+un[1]*ul[1]+un[2]*ul[2]);
+      idg += l[ctr].g * r.dg * (un[0]*ul[0]+un[1]*ul[1]+un[2]*ul[2]);
+      idb += l[ctr].b * r.db * (un[0]*ul[0]+un[1]*ul[1]+un[2]*ul[2]);
+      ctr++;
+    }
     //SPECULAR
+    isr = 0;
+    isg = 0;
+    isb = 0;
+    ctr = 0;
 
+   
+    while(l[ctr].name != NULL){
+      light[0] = l[ctr].x;
+      light[1] = l[ctr].y;
+      light[2] = l[ctr].z;
+      ul = unitify(light);
 
+      tempdot = un[0]*ul[0]+un[1]*ul[1]+un[2]*ul[2];
+      scaley = 2*un[2]*tempdot - ul[2];
+      isr += l[ctr].r * r.sr * scaley;
+      isg += l[ctr].g * r.sg * scaley;
+      isb += l[ctr].b * r.sb * scaley;
+    }
+    
+    iallr = iar + idr + isr;
+    iallg = iag + idg + isg;
+    iallb = iab + idb + isb;
 
-
-
+    c.red = iallr;
+    c.green = iallg;
+    c.blue = iallb;
     
     if ( normal[2] > 0 ) {
       
       //printf("polygon %d\n", point);
-      scanline_convert( polygons, point, s, zb );
+      scanline_convert( polygons, point, s, zb, c );
       /* c.red = 0; */
       /* c.green = 255; */
       /* c.blue = 0; */

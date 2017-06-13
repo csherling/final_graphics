@@ -5,4 +5,6 @@
 
 double *calculate_normal(struct matrix *polygons, int i);
 
+double *unitify(double *v);
+
 #endif

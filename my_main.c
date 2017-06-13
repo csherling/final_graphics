@@ -187,11 +187,10 @@ struct vary_node ** second_pass() {
 }
 
 
-light ** light_pass() {
+light * light_pass() {
   int i, k, numlights;
   numlights = 0;
-  light ** lits;
-  light * onelit;
+  light * lits;
   for (i=0; i<lastop; i++) {
     if (op[i].opcode == LIGHT){
       numlights++;
@@ -199,29 +198,29 @@ light ** light_pass() {
   }
   int lightnum;  lightnum = 0;
   
-  lits = (light **)calloc(numlights, sizeof(light));
+  lits = (light *)calloc(numlights, sizeof(light));
   
   for (i=0; i<lastop; i++) {
     if (op[i].opcode == LIGHT){
-      onelit = (light *)calloc(1, sizeof(light));
-      onelit->x = op[i].op.light.p->s.l->l[0];
-      onelit->y = op[i].op.light.p->s.l->l[1];
-      onelit->z = op[i].op.light.p->s.l->l[2];
-      onelit->r = op[i].op.light.p->s.l->l[3];
-      onelit->g = op[i].op.light.p->s.l->l[4];
-      onelit->b = op[i].op.light.p->s.l->l[5];
-      strcpy(onelit->name, op[i].op.light.p->name);
-      lits[lightnum]=onelit;
+      /* lits = (light *)calloc(1, sizeof(light)); */
+      lits[lightnum].x = op[i].op.light.p->s.l->l[0];
+      lits[lightnum].y = op[i].op.light.p->s.l->l[1];
+      lits[lightnum].z = op[i].op.light.p->s.l->l[2];
+      lits[lightnum].r = op[i].op.light.p->s.l->l[3];
+      lits[lightnum].g = op[i].op.light.p->s.l->l[4];
+      lits[lightnum].b = op[i].op.light.p->s.l->l[5];
+      /* strcpy(onelit->name, op[i].op.light.p->name); */
+      /* lits[lightnum]=onelit; */
       lightnum++;
     }
   }
 }
 
-reflection ** constants_pass() {
+reflection * constants_pass() {
   int i, k, numrefs;
   numrefs = 0;
-  reflection ** refs;
-  reflection * oneref;
+  reflection * refs;
+  /* reflection * oneref; */
   for (i=0; i<lastop; i++) {
     if (op[i].opcode == CONSTANTS){
       numrefs++;
@@ -229,22 +228,22 @@ reflection ** constants_pass() {
   }
   int refnum;  refnum = 0;
   
-  refs = (reflection **)calloc(numrefs, sizeof(reflection));
+  refs = (reflection *)calloc(numrefs, sizeof(reflection));
   
   for (i=0; i<lastop; i++) {
     if (op[i].opcode == CONSTANTS){
-      oneref = (reflection *)calloc(1, sizeof(reflection));
-      oneref->ar = op[i].op.constants.p->s.c->r[0];
-      oneref->dr = op[i].op.constants.p->s.c->r[1];
-      oneref->sr = op[i].op.constants.p->s.c->r[2];
-      oneref->ag = op[i].op.constants.p->s.c->g[0];
-      oneref->dg = op[i].op.constants.p->s.c->g[1];
-      oneref->sg = op[i].op.constants.p->s.c->g[2];
-      oneref->ab = op[i].op.constants.p->s.c->b[0];
-      oneref->db = op[i].op.constants.p->s.c->b[1];
-      oneref->sb = op[i].op.constants.p->s.c->b[2];
-      strcpy(oneref->name, op[i].op.constants.p->name);
-      refs[refnum]=oneref;
+      /* oneref = (reflection *)calloc(1, sizeof(reflection)); */
+      refs[refnum].ar = op[i].op.constants.p->s.c->r[0];
+      refs[refnum].dr = op[i].op.constants.p->s.c->r[1];
+      refs[refnum].sr = op[i].op.constants.p->s.c->r[2];
+      refs[refnum].ag = op[i].op.constants.p->s.c->g[0];
+      refs[refnum].dg = op[i].op.constants.p->s.c->g[1];
+      refs[refnum].sg = op[i].op.constants.p->s.c->g[2];
+      refs[refnum].ab = op[i].op.constants.p->s.c->b[0];
+      refs[refnum].db = op[i].op.constants.p->s.c->b[1];
+      refs[refnum].sb = op[i].op.constants.p->s.c->b[2];
+      /* strcpy(oneref->name, op[i].op.constants.p->name); */
+      /* refs[refnum]=oneref; */
       refnum++;
     }
   }
@@ -314,11 +313,11 @@ void my_main() {
   int f;
 
   //
-  light ** lights;
+  light * lights;
   lights = light_pass();
   //
   //
-  reflection ** refs;
+  reflection * refs;
   refs = constants_pass();
   reflection generic;
   generic.ar=1;
@@ -330,7 +329,6 @@ void my_main() {
   generic.ab=1;
   generic.db=1;
   generic.sb=1;
-  
   //
   int i, j;
   struct matrix *tmp;
@@ -356,6 +354,9 @@ void my_main() {
   double knob_value, xval, yval, zval;
   /* printf("Got to main2\n"); */
   /* fflush(stdout); */
+
+  int ctr;
+  ctr = 0;
   
   g.red = 0;
   g.green = 0;
@@ -442,6 +443,14 @@ void my_main() {
 	  /* 	 op[i].op.sphere.r); */
 	  if (op[i].op.sphere.constants != NULL)
 	    {
+	      ctr = 0;
+	      while(refs[ctr].name != NULL){
+		if(strcmp(refs[ctr].name, op[i].op.sphere.constants->name)){
+		  tmpr = refs[ctr];
+		  break;
+		}
+		ctr++;
+	      }
 	      //printf("\tconstants: %s",op[i].op.sphere.constants->name);
 	    }
 	  if (op[i].op.sphere.cs != NULL)
@@ -453,7 +462,7 @@ void my_main() {
 		     op[i].op.sphere.d[2],
 		     op[i].op.sphere.r, step);
 	  matrix_mult( peek(systems), tmp );
-	  draw_polygons(tmp, t, zb, g, lights, amb, generic);
+	  draw_polygons(tmp, t, zb, g, lights, amb, tmpr);
 	  tmp->lastcol = 0;
 	  break;
 	case TORUS:
@@ -463,6 +472,14 @@ void my_main() {
 	  /* 	 op[i].op.torus.r0,op[i].op.torus.r1); */
 	  if (op[i].op.torus.constants != NULL)
 	    {
+	      ctr = 0;
+	      while(refs[ctr].name != NULL){
+		if(strcmp(refs[ctr].name, op[i].op.torus.constants->name)){
+		  tmpr = refs[ctr];
+		  break;
+		}
+		ctr++;
+	      }
 	      //printf("\tconstants: %s",op[i].op.torus.constants->name);
 	    }
 	  if (op[i].op.torus.cs != NULL)
@@ -475,7 +492,7 @@ void my_main() {
 		    op[i].op.torus.d[2],
 		    op[i].op.torus.r0,op[i].op.torus.r1, step);
 	  matrix_mult( peek(systems), tmp );
-	  draw_polygons(tmp, t, zb, g, lights, amb, generic);
+	  draw_polygons(tmp, t, zb, g, lights, amb, tmpr);
 	  tmp->lastcol = 0;	  
 	  break;
 	case BOX:
@@ -486,6 +503,14 @@ void my_main() {
 	  /* 	 op[i].op.box.d1[2]); */
 	  if (op[i].op.box.constants != NULL)
 	    {
+	      ctr = 0;
+	      while(refs[ctr].name != NULL){
+		if(strcmp(refs[ctr].name, op[i].op.box.constants->name)){
+		  tmpr = refs[ctr];
+		  break;
+		}
+		ctr++;
+	      }
 	      //printf("\tconstants: %s",op[i].op.box.constants->name);
 	    }
 	  if (op[i].op.box.cs != NULL)
@@ -498,7 +523,7 @@ void my_main() {
 		  op[i].op.box.d1[0],op[i].op.box.d1[1],
 		  op[i].op.box.d1[2]);
 	  matrix_mult( peek(systems), tmp );
-	  draw_polygons(tmp, t, zb, g, lights, amb, generic);
+	  draw_polygons(tmp, t, zb, g, lights, amb, tmpr);
 	  tmp->lastcol = 0;
 	  break;
 	case LINE:
